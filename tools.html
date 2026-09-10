@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>도구 | 원시인 다이어리</title>
+<meta name="description" content="수면 시간 계산기, 물 적정량 계산기 등 루틴을 정할 때 참고할 수 있는 도구입니다.">
+<meta name="google-adsense-account" content="ca-pub-2557338953436433">
+<meta name="naver-site-verification" content="43a13ce1e684f0e41eff7b286d124ef4994e0cc3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2557338953436433" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="tabs">
+  <a href="index.html" class="tab">오늘</a>
+  <a href="routines.html" class="tab">루틴</a>
+  <a href="history.html" class="tab">기록</a>
+  <a href="tools.html" class="tab active">도구</a>
+</div>
+
+<main class="app">
+  <div class="hero">
+    <div class="hero-eyebrow">TOOLS</div>
+    <h1 class="display">도구</h1>
+    <p>루틴을 정할 때 참고할 수 있는 간단한 계산기예요.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-title">수면 시간 계산기</div>
+    <p style="font-size:13px; color:var(--bone-dim); margin-top:0; margin-bottom:12px;">
+      일어나고 싶은 시간을 넣으면, 수면 주기(90분)에 맞춘 취침 시간을 알려드려요.
+    </p>
+    <div class="row">
+      <input type="text" id="wake-time" placeholder="07:00" value="07:00" style="flex:1">
+      <button class="btn btn-sm" id="sleep-calc-btn">계산하기</button>
+    </div>
+    <div id="sleep-result"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">물 적정량 계산기</div>
+    <p style="font-size:13px; color:var(--bone-dim); margin-top:0; margin-bottom:12px;">
+      체중 1kg당 약 33ml를 기준으로 하루 권장 수분 섭취량을 계산해요.
+    </p>
+    <div class="row">
+      <input type="number" id="weight-input" placeholder="체중 (kg)" style="flex:1">
+      <button class="btn btn-sm" id="water-calc-btn">계산하기</button>
+    </div>
+    <div id="water-result"></div>
+  </div>
+
+  <div class="ad-slot">광고 영역 (AdSense 승인 후 ins 태그로 교체)</div>
+</main>
+
+<footer class="site-footer">
+  <a href="about.html">소개</a>
+  <a href="guide.html">가이드</a>
+  <a href="tools.html">도구</a>
+  <a href="contact.html">문의</a>
+  <a href="privacy.html">개인정보처리방침</a>
+  <a href="terms.html">이용약관</a>
+  <span class="footer-copy">© <span id="year"></span> 원시인 다이어리</span>
+</footer>
+
+<script src="common.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+document.getElementById('sleep-calc-btn').onclick = () => {
+  const val = document.getElementById('wake-time').value.trim();
+  const m = val.match(/^(\d{1,2}):(\d{2})$/);
+  const resultEl = document.getElementById('sleep-result');
+  if (!m) {
+    resultEl.innerHTML = `<div class="tool-result">시간을 &quot;07:00&quot; 형식으로 입력해주세요.</div>`;
+    return;
+  }
+  const h = parseInt(m[1], 10);
+  const min = parseInt(m[2], 10);
+  const wake = new Date();
+  wake.setHours(h, min, 0, 0);
+
+  const rows = [6, 5, 4].map((cycles) => {
+    const minsBack = cycles * 90 + 15;
+    const bedtime = new Date(wake.getTime() - minsBack * 60000);
+    const time = `${String(bedtime.getHours()).padStart(2, '0')}:${String(bedtime.getMinutes()).padStart(2, '0')}`;
+    const hours = (cycles * 1.5).toFixed(1);
+    return `<div style="margin-bottom:6px;"><b>${time}</b>에 취침 → 수면 주기 ${cycles}회 (${hours}시간)</div>`;
+  }).join('');
+
+  resultEl.innerHTML = `
+    <div class="tool-result">
+      ${rows}
+      <p style="font-size:12px; color:var(--muted); margin-top:8px; margin-bottom:0;">
+        잠드는 데 걸리는 시간(약 15분)을 포함해 계산했어요. 참고용 가이드이며, 실제 수면 주기는 사람마다 다를 수 있어요.
+      </p>
+    </div>`;
+};
+
+document.getElementById('water-calc-btn').onclick = () => {
+  const w = parseFloat(document.getElementById('weight-input').value);
+  const resultEl = document.getElementById('water-result');
+  if (!w || w <= 0) {
+    resultEl.innerHTML = `<div class="tool-result">체중을 입력해주세요.</div>`;
+    return;
+  }
+  const liters = (w * 0.033).toFixed(1);
+  const cups = Math.round((w * 0.033 * 1000) / 200);
+  resultEl.innerHTML = `
+    <div class="tool-result">
+      하루 약 <b>${liters}L</b> (200ml 컵 기준 약 ${cups}잔)
+      <p style="font-size:12px; color:var(--muted); margin-top:8px; margin-bottom:0;">
+        운동량, 날씨, 카페인 섭취 등에 따라 필요한 양은 달라질 수 있어요. 신장 질환 등 수분 제한이 필요한 경우 의사와 상담하세요.
+      </p>
+    </div>`;
+};
+</script>
+</body>
+</html>

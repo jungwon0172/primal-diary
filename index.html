@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>원시인 다이어리 | 나만의 원시인 루틴 기록</title>
+<meta name="description" content="수면, 물, 호흡, 햇빛, 걷기, 영양, 근력운동 같은 원초적 습관을 나만의 실행리스트로 기록하는 개인 루틴 다이어리입니다.">
+<meta name="google-adsense-account" content="ca-pub-2557338953436433">
+<meta name="naver-site-verification" content="43a13ce1e684f0e41eff7b286d124ef4994e0cc3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2557338953436433" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="tabs">
+  <a href="index.html" class="tab active">오늘</a>
+  <a href="routines.html" class="tab">루틴</a>
+  <a href="history.html" class="tab">기록</a>
+  <a href="tools.html" class="tab">도구</a>
+</div>
+
+<main class="app">
+  <div class="hero">
+    <div class="hero-eyebrow">PRIMAL DIARY</div>
+    <h1 class="display">원시인 다이어리</h1>
+    <p>수렵채집 시대의 몸에 맞춰, 오늘의 루틴을 새기세요.</p>
+    <div id="mural-root"></div>
+  </div>
+
+  <div id="routine-list"></div>
+
+  <div class="ad-slot">광고 영역 (AdSense 승인 후 ins 태그로 교체)</div>
+</main>
+
+<footer class="site-footer">
+  <a href="about.html">소개</a>
+  <a href="guide.html">가이드</a>
+  <a href="tools.html">도구</a>
+  <a href="contact.html">문의</a>
+  <a href="privacy.html">개인정보처리방침</a>
+  <a href="terms.html">이용약관</a>
+  <span class="footer-copy">© <span id="year"></span> 원시인 다이어리</span>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="common.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let routines = loadRoutines();
+let logs = loadLogs();
+
+function doneToday(routineId) {
+  const t = todayStr();
+  return logs.some((l) => l.routineId === routineId && l.date === t);
+}
+
+function toggle(routineId) {
+  const t = todayStr();
+  const idx = logs.findIndex((l) => l.routineId === routineId && l.date === t);
+  if (idx >= 0) {
+    logs.splice(idx, 1);
+  } else {
+    const r = routines.find((x) => x.id === routineId);
+    logs.unshift({ id: uid(), routineId, title: r.title, cat: r.cat, date: t, createdAt: Date.now(), note: '' });
+  }
+  saveLogs(logs);
+  render();
+}
+
+function render() {
+  renderMural(logs);
+  const grouped = CATS.map((c) => ({ cat: c, items: routines.filter((r) => r.cat === c.id) })).filter((g) => g.items.length);
+  const listEl = document.getElementById('routine-list');
+
+  if (routines.length === 0) {
+    listEl.innerHTML = `<div class="empty">아직 루틴이 없어요.<br>'루틴' 탭에서 나만의 실행리스트를 만들어보세요.</div>`;
+    return;
+  }
+
+  listEl.innerHTML = grouped.map((g) => `
+    <div class="card">
+      <div class="section-title"><span class="lv-dot" style="background:${g.cat.color}"></span>${g.cat.label}</div>
+      ${g.items.map((r) => `
+        <div class="routine">
+          <button class="check ${doneToday(r.id) ? 'done' : ''}" data-toggle="${r.id}" aria-label="${escapeHtml(r.title)} 완료 체크">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4" stroke="#1B1713" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="routine-body">
+            <div class="routine-title ${doneToday(r.id) ? 'done' : ''}">${escapeHtml(r.title)}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('[data-toggle]').forEach((el) => {
+    el.onclick = () => toggle(el.dataset.toggle);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

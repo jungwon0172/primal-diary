@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기록 | 원시인 다이어리</title>
+<meta name="description" content="지금까지 체크한 루틴을 목록이나 달력으로 봅니다.">
+<meta name="google-adsense-account" content="ca-pub-2557338953436433">
+<meta name="naver-site-verification" content="43a13ce1e684f0e41eff7b286d124ef4994e0cc3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2557338953436433" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="tabs">
+  <a href="index.html" class="tab">오늘</a>
+  <a href="routines.html" class="tab">루틴</a>
+  <a href="history.html" class="tab active">기록</a>
+  <a href="tools.html" class="tab">도구</a>
+</div>
+
+<main class="app">
+  <div class="hero">
+    <div class="hero-eyebrow">HISTORY</div>
+    <h1 class="display">기록</h1>
+    <p>지금까지 체크한 루틴을 목록이나 달력으로 봅니다.</p>
+  </div>
+
+  <div class="view-toggle">
+    <button class="btn btn-sm" id="btn-list">목록</button>
+    <button class="btn btn-ghost btn-sm" id="btn-calendar">달력</button>
+  </div>
+
+  <div id="view-root"></div>
+</main>
+
+<footer class="site-footer">
+  <a href="about.html">소개</a>
+  <a href="guide.html">가이드</a>
+  <a href="tools.html">도구</a>
+  <a href="contact.html">문의</a>
+  <a href="privacy.html">개인정보처리방침</a>
+  <a href="terms.html">이용약관</a>
+  <span class="footer-copy">© <span id="year"></span> 원시인 다이어리</span>
+</footer>
+
+<script src="common.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let logs = loadLogs();
+let view = 'list';
+let cursor = (() => { const n = new Date(); return { y: n.getFullYear(), m: n.getMonth() }; })();
+const noteTimers = {};
+
+function pad(n) { return String(n).padStart(2, '0'); }
+function ymd(y, m, d) { return `${y}-${pad(m + 1)}-${pad(d)}`; }
+function fmtShort(d) { const dt = new Date(d); return `${dt.getMonth() + 1}.${dt.getDate()}`; }
+
+function buildMonthGrid(year, month) {
+  const firstDay = new Date(year, month, 1);
+  const startWeekday = firstDay.getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < startWeekday; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  return cells;
+}
+
+function renderList() {
+  const root = document.getElementById('view-root');
+  if (logs.length === 0) {
+    root.innerHTML = `<div class="empty">아직 기록이 없어요.<br>'오늘' 탭에서 루틴을 체크해보세요.</div>`;
+    return;
+  }
+  root.innerHTML = `<div class="card">${logs.map((l) => {
+    const c = catInfo(l.cat);
+    return `
+      <div class="log-entry">
+        <div class="log-head">
+          <div class="log-title"><span class="lv-dot" style="background:${c.color}; margin-right:6px;"></span>${escapeHtml(l.title)}</div>
+          <div class="log-date">${fmtShort(l.date)}</div>
+        </div>
+        <textarea placeholder="오늘 어땠는지 적어보세요 (선택)" data-note="${l.id}">${escapeHtml(l.note || '')}</textarea>
+      </div>`;
+  }).join('')}</div>`;
+
+  root.querySelectorAll('[data-note]').forEach((el) => {
+    el.oninput = () => {
+      const id = el.dataset.note;
+      clearTimeout(noteTimers[id]);
+      noteTimers[id] = setTimeout(() => {
+        const entry = logs.find((l) => l.id === id);
+        if (entry) { entry.note = el.value; saveLogs(logs); }
+      }, 400);
+    };
+  });
+}
+
+function renderCalendar() {
+  const root = document.getElementById('view-root');
+  const cells = buildMonthGrid(cursor.y, cursor.m);
+  const todayS = todayStr();
+
+  const logsByDate = {};
+  logs.forEach((l) => {
+    if (!logsByDate[l.date]) logsByDate[l.date] = [];
+    logsByDate[l.date].push(l);
+  });
+
+  const dowRow = ['일', '월', '화', '수', '목', '금', '토'].map((d) => `<div class="cal-dow">${d}</div>`).join('');
+
+  const cellsHtml = cells.map((day) => {
+    if (day === null) return `<div class="cal-cell empty"></div>`;
+    const dateStr = ymd(cursor.y, cursor.m, day);
+    const dayLogs = logsByDate[dateStr] || [];
+    const isToday = dateStr === todayS;
+    const dots = dayLogs.slice(0, 6).map((l) => `<span class="cal-dot" style="background:${catInfo(l.cat).color}"></span>`).join('');
+    return `<div class="cal-cell ${isToday ? 'today' : ''}"><span>${day}</span>${dayLogs.length ? `<div class="cal-dots">${dots}</div>` : ''}</div>`;
+  }).join('');
+
+  root.innerHTML = `
+    <div class="card">
+      <div class="cal-head">
+        <button class="cal-nav" id="cal-prev">‹</button>
+        <div class="cal-title">${cursor.y}년 ${cursor.m + 1}월</div>
+        <button class="cal-nav" id="cal-next">›</button>
+      </div>
+      <div class="cal-grid">${dowRow}${cellsHtml}</div>
+    </div>
+  `;
+
+  document.getElementById('cal-prev').onclick = () => {
+    cursor = cursor.m === 0 ? { y: cursor.y - 1, m: 11 } : { y: cursor.y, m: cursor.m - 1 };
+    renderCalendar();
+  };
+  document.getElementById('cal-next').onclick = () => {
+    cursor = cursor.m === 11 ? { y: cursor.y + 1, m: 0 } : { y: cursor.y, m: cursor.m + 1 };
+    renderCalendar();
+  };
+}
+
+function setView(v) {
+  view = v;
+  document.getElementById('btn-list').className = v === 'list' ? 'btn btn-sm' : 'btn btn-ghost btn-sm';
+  document.getElementById('btn-calendar').className = v === 'calendar' ? 'btn btn-sm' : 'btn btn-ghost btn-sm';
+  if (v === 'list') renderList(); else renderCalendar();
+}
+
+document.getElementById('btn-list').onclick = () => setView('list');
+document.getElementById('btn-calendar').onclick = () => setView('calendar');
+
+setView('list');
+</script>
+</body>
+</html>

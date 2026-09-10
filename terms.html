@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이용약관 | 원시인 다이어리</title>
+<meta name="description" content="원시인 다이어리 이용약관입니다.">
+<meta name="google-adsense-account" content="ca-pub-2557338953436433">
+<meta name="naver-site-verification" content="43a13ce1e684f0e41eff7b286d124ef4994e0cc3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2557338953436433" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="tabs">
+  <a href="index.html" class="tab">오늘</a>
+  <a href="routines.html" class="tab">루틴</a>
+  <a href="history.html" class="tab">기록</a>
+  <a href="tools.html" class="tab">도구</a>
+</div>
+
+<main class="app">
+  <div class="hero">
+    <div class="hero-eyebrow">TERMS</div>
+    <h1 class="display">이용약관</h1>
+    <p id="last-updated"></p>
+  </div>
+  <div class="card article">
+    <h2>1. 서비스 이용</h2>
+    <p>본 서비스는 무료로 제공되며, 사용자는 자유롭게 루틴을 기록하고 '도구' 탭의 계산기를 활용할 수 있습니다.</p>
+    <h2>2. 콘텐츠에 대한 책임</h2>
+    <p>사용자가 작성한 루틴 제목과 메모의 내용에 대한 책임은 작성자 본인에게 있습니다.</p>
+    <h2>3. 서비스 변경 및 중단</h2>
+    <p>운영상, 기술상의 필요에 따라 서비스 내용이 변경되거나 일부 중단될 수 있으며, 중요한 변경 사항은 사이트를 통해 안내합니다.</p>
+    <h2>4. 면책 조항</h2>
+    <p>본 서비스에 기록된 습관 정보와 도구(계산기)의 결과는 일반적인 생활 정보 제공 목적이며, 의학적 진단이나 처방을 대체하지 않습니다. 건강 관련 결정은 전문가와 상담하세요.</p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <a href="about.html">소개</a>
+  <a href="guide.html">가이드</a>
+  <a href="tools.html">도구</a>
+  <a href="contact.html">문의</a>
+  <a href="privacy.html">개인정보처리방침</a>
+  <a href="terms.html">이용약관</a>
+  <span class="footer-copy">© <span id="year"></span> 원시인 다이어리</span>
+</footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+document.getElementById('last-updated').textContent = '최종 수정일: ' + new Date().toISOString().slice(0, 10);
+</script>
+</body>
+</html>
