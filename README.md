@@ -25,7 +25,7 @@
 - `guide.html` — 습관 가이드 (5단계 한눈에 보기 표 포함)
 - `about.html`, `contact.html`, `privacy.html`, `terms.html` — 정책/소개 페이지
 - `style.css`, `common.js` — 모든 페이지가 공유하는 스타일/로직
-- `ads.txt`, `robots.txt`, `sitemap.xml`, `google...html` — AdSense/검색엔진용 파일
+- `ads.txt`, `robots.txt`, `sitemap.xml`, `llms.txt`, `google...html` — AdSense/검색엔진/AI 크롤러용 파일
 
 ## 데이터 저장 방식
 
@@ -38,8 +38,19 @@
 
 ## 배포 전 확인할 것
 
-- `sitemap.xml`, `robots.txt` 안의 `REPLACE-WITH-YOUR-DOMAIN`을 실제 도메인으로 교체하세요.
+- 도메인은 `https://primal-diary.vercel.app` 기준으로 채워져 있어요. 커스텀 도메인을 연결하면 아래 'GEO' 항목의 파일들에서 도메인을 한 번에 바꿔주세요.
 - 구글/네이버 인증 코드, AdSense 코드는 이미 모든 페이지의 `<head>`에 들어가 있어요.
+
+## GEO (AI 검색·답변 엔진 최적화) 적용 내역
+
+- **모든 페이지**: canonical, Open Graph/Twitter 메타, JSON-LD(Organization · WebSite · 페이지 유형 · 빵부스러기)
+- **페이지별 스키마**: 홈 `WebApplication`(무료), 가이드 `Article` + `FAQPage`(화면의 FAQ와 문구가 동일), 추천 `Article`, 도구 `WebApplication`, 소개 `AboutPage`, 문의 `ContactPage`
+- **JS 없이도 읽히게**: 추천 페이지의 23개 팁을 HTML에 직접 넣었고, 홈에 정적 소개 문단과 `noscript` 안내를 넣었어요. (AI 크롤러는 대체로 JS를 실행하지 않아요)
+- **답변하기 좋은 구조**: 가이드에 핵심 요약 → 5단계 표 → 단계별 설명 → 자주 묻는 질문 10개 → 참고 자료(CDC · 미국수면의학회 · WHO 링크), 각 페이지에 최종 업데이트 날짜
+- **크롤러 안내**: `llms.txt`(사이트 요약과 핵심 링크), `robots.txt`(AI 검색 봇 명시 허용), `sitemap.xml`(lastmod 포함)
+- 커스텀 도메인을 연결하면 `https://primal-diary.vercel.app`를 모든 `*.html`(canonical/OG/JSON-LD), `sitemap.xml`, `robots.txt`, `llms.txt`에서 새 도메인으로 바꿔주세요.
+- 내용을 고칠 때는 해당 페이지의 "최종 업데이트" 날짜와 `sitemap.xml`의 lastmod, JSON-LD의 dateModified도 같이 갱신해주세요.
+- 특정 AI 봇을 막고 싶다면 `robots.txt`에서 해당 봇의 `Allow: /`를 `Disallow: /`로 바꾸면 돼요.
 
 ## AdSense 심사 전 체크리스트
 
@@ -49,5 +60,5 @@
 - [x] 개인정보처리방침(쿠키 고지 포함), 이용약관, 소개, 문의 페이지
 - [x] 원본 텍스트 콘텐츠 (`guide.html`), 실용 도구 (`tools.html`)
 - [ ] 커스텀 도메인 연결
-- [ ] `sitemap.xml`, `robots.txt` 도메인 교체
+- [x] `sitemap.xml`, `robots.txt` 도메인 반영 (primal-diary.vercel.app)
 - [ ] AdSense 승인 후 `<div class="ad-slot">` 부분을 실제 광고 태그로 교체

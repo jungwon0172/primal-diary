@@ -3,8 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>투두 브레인 | 나만의 루틴 기록</title>
-<meta name="description" content="수면, 물, 호흡, 햇빛, 걷기, 영양, 근력운동 같은 원초적 습관을 나만의 실행리스트로 기록하는 개인 루틴 투두입니다.">
+<title>투두 브레인 | 습관 5단계 피라미드로 매일 체크하는 루틴 투두</title>
+<meta name="description" content="수면·물·호흡부터 걷기·근력운동·관계·여백까지, 기본 습관을 5단계 피라미드로 정리해 매일 체크하는 무료 루틴 투두 앱. 로그인 없이 쓰고 기록은 내 브라우저에만 저장돼요.">
+<!-- geo:start -->
+<link rel="canonical" href="https://primal-diary.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="투두 브레인">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="투두 브레인 | 습관 5단계 피라미드로 매일 체크하는 루틴 투두">
+<meta property="og:description" content="수면·물·호흡부터 걷기·근력운동·관계·여백까지, 기본 습관을 5단계 피라미드로 정리해 매일 체크하는 무료 루틴 투두 앱. 로그인 없이 쓰고 기록은 내 브라우저에만 저장돼요.">
+<meta property="og:url" content="https://primal-diary.vercel.app/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="투두 브레인 | 습관 5단계 피라미드로 매일 체크하는 루틴 투두">
+<meta name="twitter:description" content="수면·물·호흡부터 걷기·근력운동·관계·여백까지, 기본 습관을 5단계 피라미드로 정리해 매일 체크하는 무료 루틴 투두 앱. 로그인 없이 쓰고 기록은 내 브라우저에만 저장돼요.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://primal-diary.vercel.app/#org",
+      "name": "투두 브레인",
+      "alternateName": "Todo Brain",
+      "url": "https://primal-diary.vercel.app/",
+      "email": "yjw2172@naver.com"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://primal-diary.vercel.app/#website",
+      "url": "https://primal-diary.vercel.app/",
+      "name": "투두 브레인",
+      "alternateName": "Todo Brain",
+      "inLanguage": "ko-KR",
+      "publisher": {
+        "@id": "https://primal-diary.vercel.app/#org"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://primal-diary.vercel.app/#webpage",
+      "url": "https://primal-diary.vercel.app/",
+      "name": "투두 브레인 | 습관 5단계 피라미드로 매일 체크하는 루틴 투두",
+      "description": "수면·물·호흡부터 걷기·근력운동·관계·여백까지, 기본 습관을 5단계 피라미드로 정리해 매일 체크하는 무료 루틴 투두 앱. 로그인 없이 쓰고 기록은 내 브라우저에만 저장돼요.",
+      "inLanguage": "ko-KR",
+      "isPartOf": {
+        "@id": "https://primal-diary.vercel.app/#website"
+      },
+      "dateModified": "2026-10-31"
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://primal-diary.vercel.app/#app",
+      "name": "투두 브레인",
+      "url": "https://primal-diary.vercel.app/",
+      "description": "수면·물·호흡부터 걷기·근력운동·관계·여백까지, 기본 습관을 5단계 피라미드로 정리해 매일 체크하는 무료 루틴 투두 앱. 로그인 없이 쓰고 기록은 내 브라우저에만 저장돼요.",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript",
+      "inLanguage": "ko-KR",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KRW"
+      },
+      "featureList": [
+        "5단계 습관 피라미드 진행도",
+        "루틴 추가·이름 수정·삭제",
+        "달력 기록과 지난 날짜 체크",
+        "식단·행동 지침·환경 설계 추천",
+        "수면 시간 설정과 계산기, 물 적정량 계산기"
+      ]
+    }
+  ]
+}
+</script>
+<!-- geo:end -->
 <meta name="google-adsense-account" content="ca-pub-2557338953436433">
 <meta name="naver-site-verification" content="43a13ce1e684f0e41eff7b286d124ef4994e0cc3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -50,6 +124,24 @@
   </div>
 
   <div id="routine-list"></div>
+
+  <!-- geo:about:start -->
+  <noscript><div class="empty">루틴 체크리스트를 사용하려면 브라우저에서 JavaScript를 켜주세요.</div></noscript>
+
+  <section class="card article" id="about-app">
+    <h2>투두 브레인이란?</h2>
+    <p><b>투두 브레인</b>은 수면·물·호흡부터 걷기, 근력운동, 사람과의 관계, 디지털 절제까지 사람이 오래전부터 몸에 새겨온 기본 습관을 <b>5단계 피라미드</b>로 정리해 매일 체크하는 무료 루틴 투두 웹앱입니다. 로그인 없이 쓰고, 기록은 내 브라우저에만 저장돼요.</p>
+    <h3>이런 걸 할 수 있어요</h3>
+    <ul>
+      <li><b>5단계 습관 피라미드</b>: 바탕(수면·물·호흡) → 리듬(햇빛·걷기·영양) → 단련(불편함·근력·고강도 운동) → 관계(눈맞춤·친구·기여) → 여백(몰입·멍때리기). 아래 단계부터 채워가요.</li>
+      <li><b>나만의 루틴</b>: 루틴을 추가하고 이름을 고치거나 삭제하고, 단계 이름도 직접 바꿀 수 있어요.</li>
+      <li><b>달력 기록</b>: 지난 날짜의 루틴도 확인하고 체크할 수 있어요.</li>
+      <li><b>추천</b>: <a href="tips.html">식단·행동 지침·환경 설계</a> 팁을 골라 한 번에 내 루틴으로 추가해요.</li>
+      <li><b>도구</b>: <a href="tools.html">수면 시간 설정과 계산기, 물 적정량 계산기</a>를 써볼 수 있어요.</li>
+    </ul>
+    <p>단계별 설명과 자주 묻는 질문은 <a href="guide.html">습관 가이드</a>에서 볼 수 있어요.</p>
+  </section>
+  <!-- geo:about:end -->
 
   <div class="ad-slot">광고 영역 (AdSense 승인 후 ins 태그로 교체)</div>
 </main>

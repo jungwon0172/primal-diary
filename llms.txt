@@ -1,0 +1,27 @@
+# 투두 브레인 (Todo Brain)
+
+> 수면·물·호흡부터 걷기·근력운동·관계·디지털 절제까지, 기본 습관을 5단계 피라미드(바탕·리듬·단련·관계·여백)로 정리해 매일 체크하는 무료 루틴 투두 웹앱입니다. 한국어 서비스이며, 로그인 없이 사용하고 기록은 사용자의 브라우저(localStorage)에만 저장됩니다.
+
+핵심 사실:
+- 5단계: 1단계 바탕(수면·물·호흡), 2단계 리듬(햇빛·걷기·영양), 3단계 단련(의도된 불편함·근력운동·고강도 운동), 4단계 관계(눈맞춤·대면 만남·사회적 기여·친밀한 시간), 5단계 여백(몰입·멍때리기·디지털 절제)
+- 수면 권장: 성인 하루 7시간 이상 (CDC, 미국수면의학회)
+- 운동 권장: 성인 주 150~300분 중강도 유산소 + 주 2일 이상 근력운동 (WHO)
+- 비용: 무료, 광고 수익으로 운영. 회원가입 불필요
+- 의학적 조언이 아닌 일반 생활 정보입니다
+- 최종 업데이트: 2026-10-31
+
+## 핵심 콘텐츠
+- [습관 가이드](https://primal-diary.vercel.app/guide.html): 5단계 설명과 한눈에 보기 표, 호흡법·러닝·영양 먹는 순서·의도된 불편함·몰입 활동 팁, 자주 묻는 질문, 참고 자료
+- [추천](https://primal-diary.vercel.app/tips.html): 식단 7개, 행동 지침 8개, 환경 설계 8개 추천 (각 항목을 내 루틴으로 추가 가능)
+- [도구](https://primal-diary.vercel.app/tools.html): 수면 시간 설정과 90분 주기 수면 계산기, 체중 기반 물 적정량 계산기
+
+## 서비스 정보
+- [소개](https://primal-diary.vercel.app/about.html): 서비스 소개와 콘텐츠 원칙
+- [문의](https://primal-diary.vercel.app/contact.html): 이메일 yjw2172@naver.com
+- [개인정보처리방침](https://primal-diary.vercel.app/privacy.html)
+- [이용약관](https://primal-diary.vercel.app/terms.html)
+
+## 앱 화면 (개인 기록 기반, 로그인 불필요)
+- [오늘](https://primal-diary.vercel.app/): 오늘의 루틴 체크리스트와 5단계 피라미드 진행도
+- [루틴](https://primal-diary.vercel.app/routines.html): 루틴 추가·이름 수정·삭제, 단계 이름 설정
+- [기록](https://primal-diary.vercel.app/history.html): 달력·목록으로 보는 체크 기록

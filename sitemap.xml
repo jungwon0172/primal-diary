@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN/</loc></url>
-  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN/guide.html</loc></url>
-  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN/tips.html</loc></url>
-  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN/tools.html</loc></url>
-  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN/about.html</loc></url>
-  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN/contact.html</loc></url>
-  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN/privacy.html</loc></url>
-  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN/terms.html</loc></url>
+  <url><loc>https://primal-diary.vercel.app/</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://primal-diary.vercel.app/guide.html</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://primal-diary.vercel.app/tips.html</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://primal-diary.vercel.app/tools.html</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://primal-diary.vercel.app/about.html</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://primal-diary.vercel.app/contact.html</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://primal-diary.vercel.app/privacy.html</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://primal-diary.vercel.app/terms.html</loc><lastmod>2026-10-31</lastmod></url>
 </urlset>
