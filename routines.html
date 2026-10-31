@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>내 루틴 | 원시인 다이어리</title>
+<title>내 루틴 | 투두 브레인</title>
 <meta name="description" content="나만의 실행리스트를 자유롭게 구성하세요.">
 <meta name="google-adsense-account" content="ca-pub-2557338953436433">
 <meta name="naver-site-verification" content="43a13ce1e684f0e41eff7b286d124ef4994e0cc3">
@@ -13,43 +13,50 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2557338953436433" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="tabs">
-  <a href="index.html" class="tab">오늘</a>
-  <a href="routines.html" class="tab active">루틴</a>
-  <a href="history.html" class="tab">기록</a>
-  <a href="tools.html" class="tab">도구</a>
-</div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <nav class="tabs">
+      <a href="index.html" class="tab">오늘</a>
+      <a href="routines.html" class="tab active">루틴</a>
+      <a href="tips.html" class="tab">추천</a>
+      <a href="history.html" class="tab">기록</a>
+      <a href="tools.html" class="tab">도구</a>
+    </nav>
+    <nav class="top-links">
+      <a href="about.html">소개</a>
+      <a href="contact.html">문의</a>
+    </nav>
+  </div>
+</header>
 
 <main class="app">
   <div class="hero">
     <div class="hero-eyebrow">ROUTINES</div>
     <h1 class="display">내 루틴</h1>
-    <p>나만의 실행리스트를 자유롭게 구성하세요.</p>
+    <p>나만의 실행리스트를 추가하고, 이름을 고치거나 필요 없는 루틴은 삭제하세요. 수면 시간은 '도구' 탭에서 정할 수 있어요.</p>
   </div>
 
   <div class="card">
     <div class="section-title">새 루틴 추가</div>
     <div class="row">
-      <input type="text" id="new-title" placeholder="예: 냉수 샤워" style="flex:2">
-      <select id="new-cat" style="flex:1"></select>
+      <input type="text" id="new-title" class="grow" placeholder="예: 냉수 샤워" maxlength="60">
+      <select id="new-cat" class="sel"></select>
       <button class="btn btn-sm" id="add-btn">추가</button>
     </div>
   </div>
 
-  <div class="card">
-    <div class="section-title" id="count-title">내 루틴</div>
-    <div id="routine-list"></div>
-  </div>
+  <div id="routine-groups"></div>
 </main>
 
 <footer class="site-footer">
   <a href="about.html">소개</a>
   <a href="guide.html">가이드</a>
+  <a href="tips.html">추천</a>
   <a href="tools.html">도구</a>
   <a href="contact.html">문의</a>
   <a href="privacy.html">개인정보처리방침</a>
   <a href="terms.html">이용약관</a>
-  <span class="footer-copy">© <span id="year"></span> 원시인 다이어리</span>
+  <span class="footer-copy">© <span id="year"></span> 투두 브레인</span>
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -59,51 +66,92 @@
 document.getElementById('year').textContent = new Date().getFullYear();
 
 let routines = loadRoutines();
+let editingId = null;
 
 const catSelect = document.getElementById('new-cat');
 catSelect.innerHTML = CATS.map((c) => `<option value="${c.id}">${c.label}</option>`).join('');
 
-function render() {
-  document.getElementById('count-title').textContent = `내 루틴 (${routines.length})`;
-  const listEl = document.getElementById('routine-list');
+function saveRename(id, value) {
+  const title = value.trim();
+  if (!title) { showToast('루틴 이름을 입력해주세요.'); return; }
+  const logs = loadLogs();
+  if (applyRename(routines, logs, id, title)) {
+    editingId = null;
+    showToast('루틴 이름을 바꿨어요.');
+    render();
+  }
+}
 
+function render() {
+  const root = document.getElementById('routine-groups');
   if (routines.length === 0) {
-    listEl.innerHTML = `<div class="empty">루틴을 추가해보세요.</div>`;
+    root.innerHTML = `<div class="card"><div class="empty">루틴이 없어요. 위에서 추가하거나 '추천' 탭에서 골라보세요.</div></div>`;
     return;
   }
 
-  listEl.innerHTML = routines.map((r) => {
-    const c = catInfo(r.cat);
-    return `
-      <div class="routine">
-        <span class="lv-dot" style="background:${c.color}"></span>
-        <div class="routine-body">
-          <div class="routine-title">${escapeHtml(r.title)}</div>
-          <div class="routine-cat">${c.label}</div>
-        </div>
-        <button class="routine-del" data-del="${r.id}">삭제</button>
-      </div>`;
-  }).join('');
+  const grouped = CATS.map((c) => ({ cat: c, items: routines.filter((r) => r.cat === c.id) })).filter((g) => g.items.length);
+  root.innerHTML = grouped.map((g) => `
+    <div class="card">
+      <div class="section-title"><span class="lv-dot" style="background:${g.cat.color}"></span>${g.cat.label} <span class="date-count">${g.items.length}개</span></div>
+      ${g.items.map((r) => editingId === r.id ? `
+        <div class="routine editing">
+          <div class="routine-body"><input type="text" class="rename-input" value="${escapeHtml(r.title)}" maxlength="60" aria-label="루틴 이름"></div>
+          <div class="routine-actions">
+            <button class="btn btn-sm" data-save="${r.id}">저장</button>
+            <button class="btn btn-ghost btn-sm" data-cancel="1">취소</button>
+          </div>
+        </div>` : `
+        <div class="routine">
+          <div class="routine-body"><div class="routine-title">${escapeHtml(r.title)}</div></div>
+          <div class="routine-actions">
+            <button class="routine-del routine-edit" data-edit="${r.id}">수정</button>
+            <button class="routine-del" data-del="${r.id}">삭제</button>
+          </div>
+        </div>`).join('')}
+    </div>
+  `).join('');
 
-  listEl.querySelectorAll('[data-del]').forEach((el) => {
+  root.querySelectorAll('[data-edit]').forEach((el) => {
+    el.onclick = () => { editingId = el.dataset.edit; render(); const i = root.querySelector('.rename-input'); if (i) { i.focus(); i.select(); } };
+  });
+  root.querySelectorAll('[data-cancel]').forEach((el) => { el.onclick = () => { editingId = null; render(); }; });
+  root.querySelectorAll('[data-save]').forEach((el) => {
+    el.onclick = () => saveRename(el.dataset.save, root.querySelector('.rename-input').value);
+  });
+  const input = root.querySelector('.rename-input');
+  if (input) {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') saveRename(editingId, input.value);
+      if (e.key === 'Escape') { editingId = null; render(); }
+    });
+  }
+
+  root.querySelectorAll('[data-del]').forEach((el) => {
     el.onclick = () => {
-      routines = routines.filter((r) => r.id !== el.dataset.del);
+      const r = routines.find((x) => x.id === el.dataset.del);
+      if (!r) return;
+      if (!confirm(`"${r.title}" 루틴을 삭제할까요?\n지난 기록은 그대로 남아요.`)) return;
+      routines = routines.filter((x) => x.id !== r.id);
       saveRoutines(routines);
+      showToast('루틴을 삭제했어요.');
       render();
     };
   });
 }
 
-document.getElementById('add-btn').onclick = () => {
-  const titleInput = document.getElementById('new-title');
-  const title = titleInput.value.trim();
+function addRoutine() {
+  const input = document.getElementById('new-title');
+  const title = input.value.trim();
   if (!title) return;
   routines.push({ id: uid(), title: title.slice(0, 60), cat: catSelect.value });
   saveRoutines(routines);
-  titleInput.value = '';
+  input.value = '';
   showToast('루틴을 추가했어요.');
   render();
-};
+}
+
+document.getElementById('add-btn').onclick = addRoutine;
+document.getElementById('new-title').addEventListener('keydown', (e) => { if (e.key === 'Enter') addRoutine(); });
 
 render();
 </script>

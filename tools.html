@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>도구 | 원시인 다이어리</title>
+<title>도구 | 투두 브레인</title>
 <meta name="description" content="수면 시간 계산기, 물 적정량 계산기 등 루틴을 정할 때 참고할 수 있는 도구입니다.">
 <meta name="google-adsense-account" content="ca-pub-2557338953436433">
 <meta name="naver-site-verification" content="43a13ce1e684f0e41eff7b286d124ef4994e0cc3">
@@ -13,27 +13,47 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2557338953436433" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="tabs">
-  <a href="index.html" class="tab">오늘</a>
-  <a href="routines.html" class="tab">루틴</a>
-  <a href="history.html" class="tab">기록</a>
-  <a href="tools.html" class="tab active">도구</a>
-</div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <nav class="tabs">
+      <a href="index.html" class="tab">오늘</a>
+      <a href="routines.html" class="tab">루틴</a>
+      <a href="tips.html" class="tab">추천</a>
+      <a href="history.html" class="tab">기록</a>
+      <a href="tools.html" class="tab active">도구</a>
+    </nav>
+    <nav class="top-links">
+      <a href="about.html">소개</a>
+      <a href="contact.html">문의</a>
+    </nav>
+  </div>
+</header>
 
 <main class="app">
   <div class="hero">
     <div class="hero-eyebrow">TOOLS</div>
     <h1 class="display">도구</h1>
-    <p>루틴을 정할 때 참고할 수 있는 간단한 계산기예요.</p>
+    <p>루틴을 정할 때 참고할 수 있는 간단한 도구예요.</p>
+  </div>
+
+  <div class="card" id="sleep-setter">
+    <div class="section-title">내 수면 시간 설정</div>
+    <p class="section-note">잠드는 시간과 일어나는 시간을 정하면, 오늘 탭의 '수면' 루틴 이름이 그 시간으로 바뀌어요.</p>
+    <div class="row">
+      <label class="time-field">취침 시간<input type="time" id="bed-time" value="23:30"></label>
+      <label class="time-field">기상 시간<input type="time" id="wake-set" value="07:00"></label>
+    </div>
+    <div class="tool-result" id="sleep-summary"></div>
+    <div style="margin-top:12px;"><button class="btn" id="sleep-save">수면 루틴에 적용</button></div>
   </div>
 
   <div class="card">
     <div class="section-title">수면 시간 계산기</div>
-    <p style="font-size:13px; color:var(--bone-dim); margin-top:0; margin-bottom:12px;">
-      일어나고 싶은 시간을 넣으면, 수면 주기(90분)에 맞춘 취침 시간을 알려드려요.
+    <p class="section-note" style="margin-bottom:12px;">
+      일어나고 싶은 시간을 넣으면, 수면 주기(90분)에 맞춘 취침 시간을 알려드려요. 마음에 드는 시간은 위의 설정으로 바로 옮길 수 있어요.
     </p>
     <div class="row">
-      <input type="text" id="wake-time" placeholder="07:00" value="07:00" style="flex:1">
+      <input type="text" id="wake-time" class="grow" placeholder="07:00" value="07:00" inputmode="numeric">
       <button class="btn btn-sm" id="sleep-calc-btn">계산하기</button>
     </div>
     <div id="sleep-result"></div>
@@ -41,11 +61,11 @@
 
   <div class="card">
     <div class="section-title">물 적정량 계산기</div>
-    <p style="font-size:13px; color:var(--bone-dim); margin-top:0; margin-bottom:12px;">
+    <p class="section-note" style="margin-bottom:12px;">
       체중 1kg당 약 33ml를 기준으로 하루 권장 수분 섭취량을 계산해요.
     </p>
     <div class="row">
-      <input type="number" id="weight-input" placeholder="체중 (kg)" style="flex:1">
+      <input type="number" id="weight-input" class="grow" placeholder="체중 (kg)">
       <button class="btn btn-sm" id="water-calc-btn">계산하기</button>
     </div>
     <div id="water-result"></div>
@@ -57,36 +77,86 @@
 <footer class="site-footer">
   <a href="about.html">소개</a>
   <a href="guide.html">가이드</a>
+  <a href="tips.html">추천</a>
   <a href="tools.html">도구</a>
   <a href="contact.html">문의</a>
   <a href="privacy.html">개인정보처리방침</a>
   <a href="terms.html">이용약관</a>
-  <span class="footer-copy">© <span id="year"></span> 원시인 다이어리</span>
+  <span class="footer-copy">© <span id="year"></span> 투두 브레인</span>
 </footer>
+<div class="toast" id="toast"></div>
 
 <script src="common.js"></script>
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
+// ----- 수면 시간 설정 -----
+const bedInput = document.getElementById('bed-time');
+const wakeSetInput = document.getElementById('wake-set');
+const wakeCalcInput = document.getElementById('wake-time');
+
+const savedSleep = loadSleep();
+if (savedSleep && isValidTime(savedSleep.bed) && isValidTime(savedSleep.wake)) {
+  bedInput.value = savedSleep.bed;
+  wakeSetInput.value = savedSleep.wake;
+  wakeCalcInput.value = savedSleep.wake;
+}
+
+function updateSleepSummary() {
+  const el = document.getElementById('sleep-summary');
+  const bed = bedInput.value;
+  const wake = wakeSetInput.value;
+  if (!isValidTime(bed) || !isValidTime(wake)) {
+    el.innerHTML = '취침 시간과 기상 시간을 선택해주세요.';
+    return;
+  }
+  const mins = sleepMinutes(bed, wake);
+  if (mins === 0) {
+    el.innerHTML = '취침 시간과 기상 시간이 같아요. 다르게 정해주세요.';
+    return;
+  }
+  const hours = mins / 60;
+  const note = hours < 7 || hours > 9
+    ? '<p style="font-size:12.5px; color:var(--muted); margin:8px 0 0;">성인은 보통 7~9시간 수면이 권장돼요. 본인 컨디션에 맞게 조절하세요.</p>'
+    : '';
+  el.innerHTML = `총 <b>${formatDuration(mins)}</b> 수면 (${bed} 취침 → ${wake} 기상)${note}`;
+}
+
+bedInput.addEventListener('input', updateSleepSummary);
+wakeSetInput.addEventListener('input', updateSleepSummary);
+
+document.getElementById('sleep-save').onclick = () => {
+  const bed = bedInput.value;
+  const wake = wakeSetInput.value;
+  if (!isValidTime(bed) || !isValidTime(wake)) { showToast('시간을 선택해주세요.'); return; }
+  if (sleepMinutes(bed, wake) === 0) { showToast('취침과 기상 시간이 같아요.'); return; }
+  const result = applySleepRoutine(bed, wake);
+  wakeCalcInput.value = wake;
+  showToast(result.created ? '수면 루틴을 새로 만들었어요.' : '수면 루틴 이름을 바꿨어요.');
+};
+
+updateSleepSummary();
+
+// ----- 수면 시간 계산기 -----
 document.getElementById('sleep-calc-btn').onclick = () => {
-  const val = document.getElementById('wake-time').value.trim();
+  const val = wakeCalcInput.value.trim();
   const m = val.match(/^(\d{1,2}):(\d{2})$/);
   const resultEl = document.getElementById('sleep-result');
-  if (!m) {
+  if (!m || +m[1] > 23 || +m[2] > 59) {
     resultEl.innerHTML = `<div class="tool-result">시간을 &quot;07:00&quot; 형식으로 입력해주세요.</div>`;
     return;
   }
-  const h = parseInt(m[1], 10);
-  const min = parseInt(m[2], 10);
+  const wakeStr = `${pad2(+m[1])}:${m[2]}`;
   const wake = new Date();
-  wake.setHours(h, min, 0, 0);
+  wake.setHours(+m[1], +m[2], 0, 0);
 
   const rows = [6, 5, 4].map((cycles) => {
-    const minsBack = cycles * 90 + 15;
-    const bedtime = new Date(wake.getTime() - minsBack * 60000);
-    const time = `${String(bedtime.getHours()).padStart(2, '0')}:${String(bedtime.getMinutes()).padStart(2, '0')}`;
-    const hours = (cycles * 1.5).toFixed(1);
-    return `<div style="margin-bottom:6px;"><b>${time}</b>에 취침 → 수면 주기 ${cycles}회 (${hours}시간)</div>`;
+    const bedtime = new Date(wake.getTime() - (cycles * 90 + 15) * 60000);
+    const time = `${pad2(bedtime.getHours())}:${pad2(bedtime.getMinutes())}`;
+    return `<div class="sleep-opt">
+      <span><b>${time}</b>에 취침 → 수면 주기 ${cycles}회 (${(cycles * 1.5).toFixed(1)}시간)</span>
+      <button class="btn btn-ghost btn-sm" data-bed="${time}" data-wake="${wakeStr}">이 시간으로 설정</button>
+    </div>`;
   }).join('');
 
   resultEl.innerHTML = `
@@ -96,8 +166,19 @@ document.getElementById('sleep-calc-btn').onclick = () => {
         잠드는 데 걸리는 시간(약 15분)을 포함해 계산했어요. 참고용 가이드이며, 실제 수면 주기는 사람마다 다를 수 있어요.
       </p>
     </div>`;
+
+  resultEl.querySelectorAll('[data-bed]').forEach((btn) => {
+    btn.onclick = () => {
+      bedInput.value = btn.dataset.bed;
+      wakeSetInput.value = btn.dataset.wake;
+      updateSleepSummary();
+      document.getElementById('sleep-setter').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      showToast('위에서 확인하고 "수면 루틴에 적용"을 눌러주세요.');
+    };
+  });
 };
 
+// ----- 물 적정량 계산기 -----
 document.getElementById('water-calc-btn').onclick = () => {
   const w = parseFloat(document.getElementById('weight-input').value);
   const resultEl = document.getElementById('water-result');

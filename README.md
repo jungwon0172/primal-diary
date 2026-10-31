@@ -1,4 +1,4 @@
-# 원시인 다이어리 (정적 HTML 버전)
+# 투두 브레인 (정적 HTML 버전)
 
 빌드/설치 과정이 전혀 없는 순수 HTML/CSS/JS 사이트예요. npm, Next.js, 서버 없음.
 기록은 방문자의 브라우저(localStorage)에만 저장됩니다.
@@ -17,10 +17,11 @@
 
 ## 파일 구성
 
-- `index.html` — 오늘 탭 (체크리스트 + 벽화 시각화)
-- `routines.html` — 루틴 관리
-- `history.html` — 기록 (목록/달력)
-- `tools.html` — 계산기 (수면 시간, 물 적정량)
+- `index.html` — 오늘 탭 (체크리스트 + 카테고리별 진행도, 날짜 이동, 편집/삭제 모드). `index.html?date=YYYY-MM-DD`로 지난 날짜 루틴도 열려요
+- `routines.html` — 루틴 관리 (추가 / 이름 수정 / 삭제)
+- `history.html` — 기록 (달력/목록). 달력에서 날짜를 누르면 그날 루틴으로 이동, 목록에서는 기록 삭제 가능
+- `tips.html` — 추천 (식단 / 행동 지침 / 환경 설계, 마음에 드는 항목을 내 루틴으로 바로 추가)
+- `tools.html` — 수면 시간 설정(취침·기상 시간을 정하면 수면 루틴 이름이 자동으로 바뀜), 수면 시간 계산기, 물 적정량 계산기
 - `guide.html` — 습관 가이드 (원본 콘텐츠)
 - `about.html`, `contact.html`, `privacy.html`, `terms.html` — 정책/소개 페이지
 - `style.css`, `common.js` — 모든 페이지가 공유하는 스타일/로직
@@ -35,7 +36,7 @@
 
 - [x] AdSense 게시자 스크립트, `ads.txt`
 - [x] 구글 서치 콘솔 / 네이버 서치어드바이저 인증 완료
-- [x] 개별 페이지 URL (`index.html`, `routines.html`, `history.html`, `tools.html`, `guide.html`, `about.html`, `contact.html`, `privacy.html`, `terms.html`)
+- [x] 개별 페이지 URL (`index.html`, `routines.html`, `tips.html`, `history.html`, `tools.html`, `guide.html`, `about.html`, `contact.html`, `privacy.html`, `terms.html`)
 - [x] 개인정보처리방침(쿠키 고지 포함), 이용약관, 소개, 문의 페이지
 - [x] 원본 텍스트 콘텐츠 (`guide.html`), 실용 도구 (`tools.html`)
 - [ ] 커스텀 도메인 연결
