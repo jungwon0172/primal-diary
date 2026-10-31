@@ -46,6 +46,16 @@
   </div>
 
   <div id="routine-groups"></div>
+
+  <div class="card" id="cat-names-card">
+    <div class="section-title">단계 이름 설정</div>
+    <p class="section-note">5개 단계의 이름을 원하는 대로 바꿀 수 있어요. 1단계가 가장 기초이고, 오늘 탭의 피라미드 맨 아래에 놓여요.</p>
+    <div class="cat-edit-grid" id="cat-edit-grid"></div>
+    <div class="row">
+      <button class="btn btn-sm" id="cat-save">이름 저장</button>
+      <button class="btn btn-ghost btn-sm" id="cat-reset">기본 이름으로</button>
+    </div>
+  </div>
 </main>
 
 <footer class="site-footer">
@@ -69,7 +79,44 @@ let routines = loadRoutines();
 let editingId = null;
 
 const catSelect = document.getElementById('new-cat');
-catSelect.innerHTML = CATS.map((c) => `<option value="${c.id}">${c.label}</option>`).join('');
+function renderCatSelect() {
+  const current = catSelect.value;
+  catSelect.innerHTML = CATS.map((c) => `<option value="${c.id}">${escapeHtml(c.label)}</option>`).join('');
+  if (current) catSelect.value = current;
+}
+renderCatSelect();
+
+function renderCatEditor() {
+  document.getElementById('cat-edit-grid').innerHTML = CATS.map((c, i) => `
+    <label><span class="lv"><span class="lv-dot" style="background:${c.color}"></span>${i + 1}단계</span>
+      <input type="text" data-cat-input="${c.id}" value="${escapeHtml(c.label)}" maxlength="8" aria-label="${i + 1}단계 이름"></label>
+  `).join('');
+}
+renderCatEditor();
+
+document.getElementById('cat-save').onclick = () => {
+  const map = {};
+  const seen = new Set();
+  for (const input of document.querySelectorAll('[data-cat-input]')) {
+    const v = input.value.trim();
+    if (!v) { showToast('비어 있는 이름이 있어요.'); return; }
+    if (seen.has(v)) { showToast('같은 이름이 있어요. 서로 다르게 정해주세요.'); return; }
+    seen.add(v);
+    map[input.dataset.catInput] = v;
+  }
+  saveCatNames(map);
+  renderCatSelect();
+  render();
+  showToast('단계 이름을 저장했어요.');
+};
+
+document.getElementById('cat-reset').onclick = () => {
+  resetCatNames();
+  renderCatSelect();
+  renderCatEditor();
+  render();
+  showToast('기본 이름으로 되돌렸어요.');
+};
 
 function saveRename(id, value) {
   const title = value.trim();
@@ -92,7 +139,7 @@ function render() {
   const grouped = CATS.map((c) => ({ cat: c, items: routines.filter((r) => r.cat === c.id) })).filter((g) => g.items.length);
   root.innerHTML = grouped.map((g) => `
     <div class="card">
-      <div class="section-title"><span class="lv-dot" style="background:${g.cat.color}"></span>${g.cat.label} <span class="date-count">${g.items.length}개</span></div>
+      <div class="section-title"><span class="lv-dot" style="background:${g.cat.color}"></span>${escapeHtml(g.cat.label)} <span class="date-count">${g.items.length}개</span></div>
       ${g.items.map((r) => editingId === r.id ? `
         <div class="routine editing">
           <div class="routine-body"><input type="text" class="rename-input" value="${escapeHtml(r.title)}" maxlength="60" aria-label="루틴 이름"></div>

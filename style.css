@@ -207,3 +207,31 @@ input[type=time]:focus { outline: 1px solid var(--fire); border-color: var(--fir
 @media (max-width: 520px) {
   input[type=time] { font-size: 16px; }
 }
+
+/* ===== 욕구 단계 피라미드 ===== */
+html { scroll-behavior: smooth; }
+.pyramid { display: flex; flex-direction: column; gap: 4px; margin: 14px auto 8px; max-width: 520px; clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%); }
+.tier { position: relative; height: 52px; background: #2a2319; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); }
+.tier-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--c); opacity: .92; transition: width .25s; }
+.tier-text { position: relative; display: inline-flex; align-items: center; gap: 8px; background: rgba(23,19,15,.8); padding: 3px 11px; border-radius: 12px; font-size: 14px; font-weight: 600; max-width: 90%; }
+.tier-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90px; }
+.tier-count { color: var(--bone-dim); font-size: 12.5px; font-weight: 500; flex: 0 0 auto; }
+a.tier:hover .tier-fill { opacity: 1; }
+.tier.empty-tier { opacity: .55; }
+.pyramid-note { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); text-align: center; line-height: 1.6; }
+
+/* 단계 한눈에 보기 표 (가이드) */
+.table-wrap { overflow-x: auto; margin: 12px 0; }
+table.levels { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 420px; }
+table.levels th, table.levels td { border: 1px solid var(--line); padding: 9px 10px; text-align: left; vertical-align: top; line-height: 1.6; }
+table.levels th { background: var(--bg-2); color: var(--bone); font-weight: 600; }
+table.levels td:first-child { white-space: nowrap; color: var(--bone); font-weight: 600; }
+
+/* 단계 이름 설정 */
+.cat-edit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.cat-edit-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: var(--bone-dim); }
+.cat-edit-grid .lv { display: flex; align-items: center; gap: 6px; }
+@media (max-width: 520px) {
+  .tier { height: 48px; }
+  .tier-text { font-size: 13.5px; padding: 3px 9px; }
+}

@@ -1,12 +1,44 @@
 // 공용 데이터 / 헬퍼 - 모든 페이지에서 불러옵니다.
 
+// 단계 이름 (아래가 기초 → 위로 갈수록 상위 단계). id는 저장 데이터와 연결돼 있어서 바꾸지 않아요.
+const DEFAULT_CAT_LABELS = { survival: '바탕', homeo: '리듬', growth: '단련', connect: '관계', defocus: '여백' };
+const CAT_NAMES_KEY = 'pd_catnames_v1';
+
 const CATS = [
-  { id: 'survival', label: '생존', color: 'var(--lv1)' },
-  { id: 'homeo', label: '항상성', color: 'var(--lv2)' },
-  { id: 'growth', label: '성장', color: 'var(--lv3)' },
-  { id: 'connect', label: '연결', color: 'var(--lv4)' },
-  { id: 'defocus', label: '탈집중', color: 'var(--lv5)' },
+  { id: 'survival', label: DEFAULT_CAT_LABELS.survival, color: 'var(--lv1)' },
+  { id: 'homeo', label: DEFAULT_CAT_LABELS.homeo, color: 'var(--lv2)' },
+  { id: 'growth', label: DEFAULT_CAT_LABELS.growth, color: 'var(--lv3)' },
+  { id: 'connect', label: DEFAULT_CAT_LABELS.connect, color: 'var(--lv4)' },
+  { id: 'defocus', label: DEFAULT_CAT_LABELS.defocus, color: 'var(--lv5)' },
 ];
+
+// 사용자가 직접 정한 단계 이름이 있으면 적용
+function applyCatNames() {
+  try {
+    const raw = localStorage.getItem(CAT_NAMES_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    CATS.forEach((c) => { if (typeof saved[c.id] === 'string' && saved[c.id].trim()) c.label = saved[c.id].trim(); });
+  } catch (e) {
+    console.error('단계 이름을 불러오지 못했어요', e);
+  }
+}
+
+function saveCatNames(map) {
+  try {
+    localStorage.setItem(CAT_NAMES_KEY, JSON.stringify(map));
+  } catch (e) {
+    console.error('단계 이름을 저장하지 못했어요', e);
+  }
+  CATS.forEach((c) => { c.label = (map[c.id] || DEFAULT_CAT_LABELS[c.id]).trim(); });
+}
+
+function resetCatNames() {
+  try { localStorage.removeItem(CAT_NAMES_KEY); } catch (e) {}
+  CATS.forEach((c) => { c.label = DEFAULT_CAT_LABELS[c.id]; });
+}
+
+applyCatNames();
 
 const DEFAULT_ROUTINES = [
   { title: '수면 (7시간 이상)', cat: 'survival' },
@@ -121,7 +153,8 @@ function showToast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
 }
 
-// ----- 진행도 (선택한 날짜 기준, 카테고리별 완료 비율) -----
+// ----- 진행도: 전체 완료율 + 5단계 피라미드 (선택한 날짜 기준) -----
+// 맨 아래가 가장 기초 단계, 위로 갈수록 상위 단계예요. 단계를 누르면 그 단계의 루틴으로 이동해요.
 function renderProgress(routines, logs, date) {
   const root = document.getElementById('progress-root');
   if (!root) return;
@@ -130,23 +163,24 @@ function renderProgress(routines, logs, date) {
   const done = routines.filter((r) => doneIds.has(r.id)).length;
   const pct = total ? Math.round((done / total) * 100) : 0;
 
-  const rows = CATS.map((c) => {
+  const tiers = CATS.slice().reverse().map((c) => {
     const items = routines.filter((r) => r.cat === c.id);
-    if (!items.length) return '';
     const d = items.filter((r) => doneIds.has(r.id)).length;
-    const p = Math.round((d / items.length) * 100);
-    return `<div class="cat-row">
-      <span class="cat-label"><span class="lv-dot" style="background:${c.color}"></span>${c.label}</span>
-      <div class="track"><div class="fill" style="width:${p}%; background:${c.color}"></div></div>
-      <span class="cat-count">${d}/${items.length}</span>
-    </div>`;
+    const p = items.length ? Math.round((d / items.length) * 100) : 0;
+    const level = CATS.findIndex((x) => x.id === c.id) + 1;
+    const inner = `<span class="tier-fill" style="width:${p}%"></span>
+      <span class="tier-text"><span class="tier-name">${escapeHtml(c.label)}</span><span class="tier-count">${items.length ? d + '/' + items.length : '-'}</span></span>`;
+    return items.length
+      ? `<a class="tier" href="#cat-${c.id}" style="--c:${c.color}" aria-label="${level}단계 ${escapeHtml(c.label)} ${d}/${items.length}">${inner}</a>`
+      : `<div class="tier empty-tier" style="--c:${c.color}" aria-label="${level}단계 ${escapeHtml(c.label)} 루틴 없음">${inner}</div>`;
   }).join('');
 
   root.innerHTML = `
     <div class="progress">
       <div class="progress-head"><span><b>${done}/${total}</b>완료</span><span>${pct}%</span></div>
       <div class="progress-total"><div style="width:${pct}%"></div></div>
-      ${rows}
+      <div class="pyramid">${tiers}</div>
+      <p class="pyramid-note">아래가 기초 단계예요. 기초가 탄탄할수록 위 단계 습관도 오래 가요.</p>
     </div>`;
 }
 

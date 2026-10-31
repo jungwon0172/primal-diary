@@ -17,15 +17,24 @@
 
 ## 파일 구성
 
-- `index.html` — 오늘 탭 (체크리스트 + 카테고리별 진행도, 날짜 이동, 편집/삭제 모드). `index.html?date=YYYY-MM-DD`로 지난 날짜 루틴도 열려요
-- `routines.html` — 루틴 관리 (추가 / 이름 수정 / 삭제)
+- `index.html` — 오늘 탭 (체크리스트 + 5단계 피라미드 진행도, 날짜 이동, 편집/삭제 모드). `index.html?date=YYYY-MM-DD`로 지난 날짜 루틴도 열려요
+- `routines.html` — 루틴 관리 (추가 / 이름 수정 / 삭제) + 단계 이름 설정
 - `history.html` — 기록 (달력/목록). 달력에서 날짜를 누르면 그날 루틴으로 이동, 목록에서는 기록 삭제 가능
 - `tips.html` — 추천 (식단 / 행동 지침 / 환경 설계, 마음에 드는 항목을 내 루틴으로 바로 추가)
 - `tools.html` — 수면 시간 설정(취침·기상 시간을 정하면 수면 루틴 이름이 자동으로 바뀜), 수면 시간 계산기, 물 적정량 계산기
-- `guide.html` — 습관 가이드 (원본 콘텐츠)
+- `guide.html` — 습관 가이드 (5단계 한눈에 보기 표 포함)
 - `about.html`, `contact.html`, `privacy.html`, `terms.html` — 정책/소개 페이지
 - `style.css`, `common.js` — 모든 페이지가 공유하는 스타일/로직
 - `ads.txt`, `robots.txt`, `sitemap.xml`, `google...html` — AdSense/검색엔진용 파일
+
+## 데이터 저장 방식
+
+모든 데이터는 방문자의 브라우저(`localStorage`)에만 저장되고 서버로 전송되지 않아요. 기기/브라우저마다 따로 저장돼요.
+
+- 루틴: `pd_routines_v2`
+- 체크 기록: `pd_logs_v2`
+- 수면 시간 설정: `pd_sleep_v1`
+- 단계 이름(바탕·리듬·단련·관계·여백을 바꿨을 때): `pd_catnames_v1`
 
 ## 배포 전 확인할 것
 

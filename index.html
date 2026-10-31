@@ -143,8 +143,8 @@ function render() {
 
   const grouped = CATS.map((c) => ({ cat: c, items: routines.filter((r) => r.cat === c.id) })).filter((g) => g.items.length);
   listEl.innerHTML = grouped.map((g) => `
-    <div class="card">
-      <div class="section-title"><span class="lv-dot" style="background:${g.cat.color}"></span>${g.cat.label}</div>
+    <div class="card" id="cat-${g.cat.id}">
+      <div class="section-title"><span class="lv-dot" style="background:${g.cat.color}"></span>${escapeHtml(g.cat.label)}</div>
       ${g.items.map((r) => `
         <div class="routine">
           <button class="check ${isDone(r.id) ? 'done' : ''}" data-toggle="${r.id}" aria-label="${escapeHtml(r.title)} 완료 체크">
